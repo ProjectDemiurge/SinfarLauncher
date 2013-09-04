@@ -26,10 +26,6 @@ namespace SinfarLauncher
             foreach (var file in UpdateFiles)
             {
                 var localfileinfo = new FileInfo(nwndir + file.Path);
-                //if (localfileinfo.Exists != true || file.Size != localfileinfo.Length || file.Lastmodified != localfileinfo.LastWriteTime)
-                //{
-                //    NeedsUpdate.Add(file);
-                //}
 
                 if (localfileinfo.Exists != true)
                 {
@@ -39,12 +35,6 @@ namespace SinfarLauncher
                 {
                     NeedsUpdate.Add(file);
                 }
-                else if (file.Lastmodified != localfileinfo.LastWriteTime)
-                {
-                    NeedsUpdate.Add(file);
-                }
-                var test = file.Lastmodified.ToUniversalTime();
-                var test2 = localfileinfo.LastWriteTime.ToUniversalTime();
 
             }
         }

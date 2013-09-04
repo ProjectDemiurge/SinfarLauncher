@@ -49,12 +49,15 @@
             // pbProgressBar
             // 
             this.pbProgressBar.Location = new System.Drawing.Point(12, 456);
+            this.pbProgressBar.MarqueeAnimationSpeed = 50;
             this.pbProgressBar.Name = "pbProgressBar";
             this.pbProgressBar.Size = new System.Drawing.Size(474, 23);
+            this.pbProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.pbProgressBar.TabIndex = 1;
             // 
             // btnLaunchSinfar
             // 
+            this.btnLaunchSinfar.Enabled = false;
             this.btnLaunchSinfar.Location = new System.Drawing.Point(493, 456);
             this.btnLaunchSinfar.Name = "btnLaunchSinfar";
             this.btnLaunchSinfar.Size = new System.Drawing.Size(75, 34);
@@ -65,6 +68,7 @@
             // 
             // btnLaunchSSI
             // 
+            this.btnLaunchSSI.Enabled = false;
             this.btnLaunchSSI.Location = new System.Drawing.Point(574, 456);
             this.btnLaunchSSI.Name = "btnLaunchSSI";
             this.btnLaunchSSI.Size = new System.Drawing.Size(75, 34);
@@ -75,6 +79,7 @@
             // 
             // btnLaunchDread
             // 
+            this.btnLaunchDread.Enabled = false;
             this.btnLaunchDread.Location = new System.Drawing.Point(655, 456);
             this.btnLaunchDread.Name = "btnLaunchDread";
             this.btnLaunchDread.Size = new System.Drawing.Size(75, 34);
@@ -104,6 +109,7 @@
             // 
             // btnLaunchArchTerre
             // 
+            this.btnLaunchArchTerre.Enabled = false;
             this.btnLaunchArchTerre.Location = new System.Drawing.Point(736, 456);
             this.btnLaunchArchTerre.Name = "btnLaunchArchTerre";
             this.btnLaunchArchTerre.Size = new System.Drawing.Size(75, 34);
@@ -125,6 +131,7 @@
             this.Controls.Add(this.btnLaunchSinfar);
             this.Controls.Add(this.pbProgressBar);
             this.Controls.Add(this.webControl1);
+            this.DoubleBuffered = true;
             this.MaximumSize = new System.Drawing.Size(835, 540);
             this.MinimumSize = new System.Drawing.Size(835, 540);
             this.Name = "Launcher";

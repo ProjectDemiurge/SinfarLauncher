@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 using System.Net;
+using System.ComponentModel;
 
 namespace SinfarLauncher
 {
@@ -13,45 +15,110 @@ namespace SinfarLauncher
         public Manifest Manifest;
         private const string NwnRoot = "D:\\NWN";
         public static string Password;
+        readonly NetworkCredential _credentials = new NetworkCredential("anonymous", "anonymous");
 
         public Launcher()
         {
             InitializeComponent();
         }
 
-        
-
         private void Form1_Load(object sender, EventArgs e)
         {
-            pbProgressBar.Minimum = 0;
-            pbProgressBar.Maximum = 100;
+
         }
 
         private void Form1_Shown(object sender, EventArgs e)
         {
             this.Show();
-            var credentials = new NetworkCredential("anonymous", "anonymous");
 
-            Remoteversion = GetRemoteVersion(credentials);
-            pbProgressBar.Value = 5;
-            Localversion = GetLocalVersion(credentials);
-            pbProgressBar.Value = 10;
+            // Compare versions
+            StatusUpdate("Checking versions...");
+            Remoteversion = GetRemoteVersion(_credentials);
+            Localversion = GetLocalVersion(_credentials);
 
             // If remote file set is newer than local file set - get full manifest
+
             if (Remoteversion > Localversion)
             {
-                
                 var updateNeeded = MessageBox.Show(@"Would you like to update?", @"Updates are available", MessageBoxButtons.YesNo);
+
                 if (updateNeeded == DialogResult.Yes)
                 {
-                    Manifest = GetFullManifest(credentials);
-                    pbProgressBar.Value = 15;
+                    StatusUpdate("Downloading manifest...");
+                    Manifest = GetFullManifest(_credentials);
+                    StatusUpdate("Comparing files to manifest");
                     if (Manifest != null) Manifest.Compare(NwnRoot);
-                    pbProgressBar.Value = 20;
+
+                    if (Manifest != null)
+                        foreach (var hak in Manifest.NeedsUpdate)
+                        {
+                            var url = "ftp://dev.projectdemiurge.net/" + hak.Path.Replace('\\', '/');
+                            Download(hak, url, _credentials, GetFileSize(hak, url, _credentials));
+                        }
+                    UpdateVersion(Remoteversion);
                 }
             }
-            pbProgressBar.Value = 100;
+            ActivateButtons();
         }
+
+        private static void UpdateVersion(int remoteversion)
+        {
+            File.WriteAllText(NwnRoot + "\\sinfar.manifest.v", remoteversion.ToString(CultureInfo.InvariantCulture));
+        }
+
+        private void ActivateButtons()
+        {
+            StatusUpdate("Ready to play!");
+            btnLaunchArchTerre.Enabled = true;
+            btnLaunchDread.Enabled = true;
+            btnLaunchSSI.Enabled = true;
+            btnLaunchSinfar.Enabled = true;
+        }
+
+        private static Int64 GetFileSize(UpdateFile hak, string url, NetworkCredential credentials)
+        {
+            var request = (FtpWebRequest) WebRequest.Create(url);
+            request.Method = WebRequestMethods.Ftp.GetFileSize;
+            request.Credentials = credentials;
+
+            var response = (FtpWebResponse) request.GetResponse();
+
+            var length = response.ContentLength;
+
+            response.Close();
+
+            return length;
+
+        }
+
+        private void Download(UpdateFile hak, string url, NetworkCredential credentials, Int64 filesize)
+        {
+            var request = (FtpWebRequest) WebRequest.Create(url);
+            request.Method = WebRequestMethods.Ftp.DownloadFile;
+            request.Credentials = credentials;
+
+            var response = (FtpWebResponse) request.GetResponse();
+            var responsestream = response.GetResponseStream();
+            if (responsestream != null)
+            {
+                var file = File.Create(NwnRoot + hak.Path);
+                var buffer = new byte[32*1024];
+                int read;
+                Int64 downloaded = 0;
+                while ((read = responsestream.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    file.Write(buffer, 0, read);
+                    downloaded = downloaded + read;
+                    StatusUpdate("Downloading " + hak.Path + " Received: " + downloaded + " of " + filesize);
+                    Application.DoEvents();
+                }
+                file.Close();
+                responsestream.Close();
+
+            }
+            response.Close();
+        }
+
 
         private void btnLaunchSinfar_Click(object sender, EventArgs e)
         {
@@ -111,8 +178,6 @@ namespace SinfarLauncher
 
         private Manifest GetFullManifest(NetworkCredential credentials)
         {
-            StatusUpdate("Downloading manifest...");
-
             Manifest manifest = null;
             var request = (FtpWebRequest)WebRequest.Create("ftp://dev.projectdemiurge.net/sinfar.manifest");
             request.Method = WebRequestMethods.Ftp.DownloadFile;
