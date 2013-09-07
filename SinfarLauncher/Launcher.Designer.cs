@@ -28,8 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.webControl1 = new Awesomium.Windows.Forms.WebControl(this.components);
             this.pbProgressBar = new System.Windows.Forms.ProgressBar();
             this.btnLaunchSinfar = new System.Windows.Forms.Button();
             this.btnLaunchSSI = new System.Windows.Forms.Button();
@@ -37,14 +35,8 @@
             this.chkDM = new System.Windows.Forms.CheckBox();
             this.lblStatus = new System.Windows.Forms.Label();
             this.btnLaunchArchTerre = new System.Windows.Forms.Button();
+            this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.SuspendLayout();
-            // 
-            // webControl1
-            // 
-            this.webControl1.Location = new System.Drawing.Point(0, 0);
-            this.webControl1.Size = new System.Drawing.Size(820, 450);
-            this.webControl1.Source = new System.Uri("http://sinfar.net/blog/oocnews", System.UriKind.Absolute);
-            this.webControl1.TabIndex = 0;
             // 
             // pbProgressBar
             // 
@@ -118,11 +110,21 @@
             this.btnLaunchArchTerre.UseVisualStyleBackColor = true;
             this.btnLaunchArchTerre.Click += new System.EventHandler(this.btnLaunchArchTerre_Click);
             // 
+            // webBrowser1
+            // 
+            this.webBrowser1.Location = new System.Drawing.Point(-1, 0);
+            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webBrowser1.Name = "webBrowser1";
+            this.webBrowser1.Size = new System.Drawing.Size(820, 450);
+            this.webBrowser1.TabIndex = 8;
+            this.webBrowser1.Url = new System.Uri("http://sinfar.net/blog/oocnews", System.UriKind.Absolute);
+            // 
             // Launcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(819, 502);
+            this.Controls.Add(this.webBrowser1);
             this.Controls.Add(this.btnLaunchArchTerre);
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.chkDM);
@@ -130,7 +132,6 @@
             this.Controls.Add(this.btnLaunchSSI);
             this.Controls.Add(this.btnLaunchSinfar);
             this.Controls.Add(this.pbProgressBar);
-            this.Controls.Add(this.webControl1);
             this.DoubleBuffered = true;
             this.MaximumSize = new System.Drawing.Size(835, 540);
             this.MinimumSize = new System.Drawing.Size(835, 540);
@@ -145,7 +146,6 @@
 
         #endregion
 
-        private Awesomium.Windows.Forms.WebControl webControl1;
         private System.Windows.Forms.ProgressBar pbProgressBar;
         private System.Windows.Forms.Button btnLaunchSinfar;
         private System.Windows.Forms.Button btnLaunchSSI;
@@ -153,6 +153,7 @@
         private System.Windows.Forms.CheckBox chkDM;
         private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.Button btnLaunchArchTerre;
+        private System.Windows.Forms.WebBrowser webBrowser1;
     }
 }
 

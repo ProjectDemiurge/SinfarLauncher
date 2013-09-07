@@ -13,7 +13,7 @@ namespace SinfarLauncher
         public int Remoteversion;
         public int Localversion;
         public Manifest Manifest;
-        private const string NwnRoot = "D:\\NWN";
+        private static string _nwnRoot;
         public static string Password;
         readonly NetworkCredential _credentials = new NetworkCredential("anonymous", "anonymous");
 
@@ -22,14 +22,12 @@ namespace SinfarLauncher
             InitializeComponent();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
 
-        }
 
         private void Form1_Shown(object sender, EventArgs e)
         {
-            this.Show();
+            _nwnRoot = Environment.CurrentDirectory;
+            Show();
 
             // Compare versions
             StatusUpdate("Checking versions...");
@@ -47,7 +45,7 @@ namespace SinfarLauncher
                     StatusUpdate("Downloading manifest...");
                     Manifest = GetFullManifest(_credentials);
                     StatusUpdate("Comparing files to manifest");
-                    if (Manifest != null) Manifest.Compare(NwnRoot);
+                    if (Manifest != null) Manifest.Compare(_nwnRoot);
 
                     if (Manifest != null)
                         foreach (var hak in Manifest.NeedsUpdate)
@@ -63,7 +61,7 @@ namespace SinfarLauncher
 
         private static void UpdateVersion(int remoteversion)
         {
-            File.WriteAllText(NwnRoot + "\\sinfar.manifest.v", remoteversion.ToString(CultureInfo.InvariantCulture));
+            File.WriteAllText(_nwnRoot + "\\sinfar.manifest.v", remoteversion.ToString(CultureInfo.InvariantCulture));
         }
 
         private void ActivateButtons()
@@ -101,7 +99,7 @@ namespace SinfarLauncher
             var responsestream = response.GetResponseStream();
             if (responsestream != null)
             {
-                var file = File.Create(NwnRoot + hak.Path);
+                var file = File.Create(_nwnRoot + hak.Path);
                 var buffer = new byte[32*1024];
                 int read;
                 Int64 downloaded = 0;
@@ -153,7 +151,7 @@ namespace SinfarLauncher
                 nwn.Arguments = "+connect play.sinfar.net:" + port;
             }
 
-            nwn.FileName = NwnRoot + "\\sinfarx.exe";
+            nwn.FileName = _nwnRoot + "\\sinfarx.exe";
 
             using (Process proc = Process.Start(nwn))
             {
@@ -202,9 +200,9 @@ namespace SinfarLauncher
             StatusUpdate("Checking local version...");
 
             var localversion = 0;
-            if (File.Exists(NwnRoot + "\\sinfar.manifest.v") == true)
+            if (File.Exists(_nwnRoot + "\\sinfar.manifest.v") == true)
             {
-                var manifestVersion = File.ReadAllText(NwnRoot + "\\sinfar.manifest.v");
+                var manifestVersion = File.ReadAllText(_nwnRoot + "\\sinfar.manifest.v");
                 localversion = Convert.ToInt32(manifestVersion);
             }
             return localversion;
